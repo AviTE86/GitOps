@@ -1,0 +1,10 @@
+pods:
+  image: avited/myapp
+  tag: v1
+  replica: 3
+
+service:
+  port: 5001
+
+container:
+  port: 5001
