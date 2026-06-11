@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+
+metadata:
+  name: flask-applicationset
+  namespace: argocd
+
+spec:
+  generators:
+  - git:
+      repoURL: https://github.com/AviTE86/GitOps.git
+      revision: main
+      directories:
+      - path: flask-aws-monitor/*
+
+  template:
+    metadata:
+      name: 'flask-{{path.basename}}'
+
+    spec:
+      project: default
+
+      source:
+        repoURL: https://github.com/AviTE86/GitOps.git
+        targetRevision: main
+        path: charts/flask-aws-monitor
+
+        helm:
+          valueFiles:
+          - '../../flask-aws-monitor/{{path.basename}}/values.yaml'
+
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{path.basename}}'
+
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
